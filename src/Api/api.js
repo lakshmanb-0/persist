@@ -1,7 +1,14 @@
 
 export const getNews = async (page, category) => {
     try {
-        const response = await fetch(`https://www.gamespot.com/api/articles/?api_key=6191a39707bc5cb1a482124413627c04fd620000&format=json&sort=publish_date:desc&limit=20&offset=${page}${category > 0 && `&filter=categories:${category}`}`,)
+        const response = await fetch(`/api/articles/?api_key=6191a39707bc5cb1a482124413627c04fd620000&format=json&sort=publish_date:desc&limit=20&offset=${page}${category > 0 && `&filter=categories:${category}`}`,
+            {
+                // headers: {
+                //     'Access-Control-Allow-Origin': '*'
+                // },
+                // mode: 'no-cors'
+            }
+        )
         // Check if the response is OK (status in the range 200-299)
         if (!response.ok) {
 
