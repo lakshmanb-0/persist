@@ -1,37 +1,40 @@
 import { Tooltip } from 'antd'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { GoHeart, GoHeartFill } from "react-icons/go";
+import { useDispatch, useSelector } from 'react-redux';
+import { addFavorite, removeFavorite } from '../store/newsSlice';
 
 const NewsItem = ({ data }) => {
     const { title, authors, image, publish_date } = data
     const [imageUrl, setImageUrl] = useState(image.screen_tiny)
     const navigate = useNavigate()
     const [liked, setLiked] = useState(false)
+    const { pathname } = useLocation()
+    const dispatch = useDispatch()
+    const favorites = useSelector(state => state.favorites)
+
 
     const handleClick = () => {
-        navigate(`/news/${data.id}`, { state: data })
+        navigate(`/news/${data.id}`, { state: { ...data, fromSearch: pathname.includes('/search') } })
     }
 
     const handleLike = () => {
         if (liked) {
             setLiked(false)
-            let liked = JSON.parse(localStorage.getItem('liked')) || []
-            liked = liked?.filter(item => item.id !== data.id)
-            liked && localStorage.setItem('liked', JSON.stringify(liked))
+            dispatch(removeFavorite(data.id))
         } else {
             setLiked(true)
-            let liked = JSON.parse(localStorage.getItem('liked')) || []
-            liked.push(data)
-            localStorage.setItem('liked', JSON.stringify(liked))
+            dispatch(addFavorite(data))
         }
     }
 
     useEffect(() => {
-        let liked = JSON.parse(localStorage.getItem('liked')) || []
-        setLiked(liked?.find(item => item.id === data.id))
-    }, [data.id])
+        // Check if the current news item is in the favorites
+        const isLiked = favorites.some(item => item.id === data.id)
+        setLiked(isLiked)
+    }, [favorites, data.id])
 
     return (
         <button

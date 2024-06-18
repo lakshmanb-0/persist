@@ -1,22 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { getNews } from '../Api/api'
-import News from '../components/News'
-import Search from '../components/Search'
-import { Spin } from 'antd'
-import Pagination from '../components/Pagination'
+import { Pagination, News, Search } from '../components/index'
+import { Breadcrumb, Spin } from 'antd'
 
 const SearchPage = () => {
     const { id } = useParams()
     const [news, setNews] = useState({})
     const [loading, setLoading] = useState(true)
-    const [page, setPage] = useState(JSON.parse(sessionStorage.getItem('page')) || 1)
+    const [page, setPage] = useState(JSON.parse(sessionStorage.getItem('currentPage')) || 1)
     const navigate = useNavigate()
 
-    console.log(page)
     useEffect(() => {
         const fetchNews = async () => {
-            console.log(page)
             setLoading(true);
             window.scrollTo(0, 0, { behavior: 'smooth' });
             const cachedNews = sessionStorage.getItem(`news_search_${id}_${page}`);
@@ -24,7 +20,7 @@ const SearchPage = () => {
                 setNews(JSON.parse(cachedNews));
                 setLoading(false);
             } else {
-                let data = await getNews((page - 1) * 12, 0, id);
+                const data = await getNews((page - 1) * 12, 0, id);
                 setNews(data);
                 setLoading(false);
                 sessionStorage.setItem(`news_search_${id}_${page}`, JSON.stringify(data));
@@ -39,8 +35,8 @@ const SearchPage = () => {
     }
 
     const handleStorage = () => {
-        sessionStorage.setItem('page', page)
-        sessionStorage.setItem('categories', 0)
+        sessionStorage.setItem('currentPage', page)
+        sessionStorage.setItem('selectedCategory', 0)
     }
 
     const clearNewsFromSessionStorage = () => {
@@ -56,13 +52,15 @@ const SearchPage = () => {
         navigate(`/search/${value}`)
     }
 
+    const breadcrumbList = [
+        { title: <Link to={'/'} onClick={() => sessionStorage.clear()}>Home</Link>, },
+        { title: id, },
+    ]
     return (
         <section className='py-5 px-4 max-w-7xl mx-auto'>
-            <div>
-                <Link to='/' className='hover:text-primary text-white/80' onClick={() => sessionStorage.clear()}> Home
-                </Link> {`> `}
-                {id}
-            </div>
+            <Breadcrumb
+                items={breadcrumbList}
+            />
             <h1 className='text-5xl font-bold text-center'>Search</h1>
             <div className='py-10 space-y-5'>
                 <Search value={id} handleSearch={handleSearch} />
@@ -70,8 +68,14 @@ const SearchPage = () => {
             <div>
                 <Spin spinning={loading} >
                     <News news={news?.results ?? []} handleStorage={handleStorage} />
+                    {
+                        news?.results?.length > 0 &&
+                        <Pagination
+                            news={news}
+                            page={page}
+                            pageChange={pageChange} />
+                    }
                 </Spin>
-                {news?.results?.length > 0 && <Pagination news={news} page={page} pageChange={pageChange} />}
             </div>
 
 

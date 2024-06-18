@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Button, Modal } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Badge, Button, Modal } from 'antd';
 import NewsItem from './NewsItem';
+import { useSelector } from 'react-redux';
 
 const Favorite = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const liked = JSON.parse(localStorage.getItem('liked')) || []
+  const liked = useSelector(state => state.favorites)
+
+
   const showModal = () => {
     setIsModalOpen(true);
-  };
-  const handleOk = () => {
-    setIsModalOpen(false);
   };
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -25,15 +25,16 @@ const Favorite = () => {
   }
   return (
     <>
-      <Button type="primary" onClick={showModal}>
-        Favorite
-      </Button>
+      <Badge count={liked.length} className='outline-none' >
+        <Button type="primary" onClick={showModal}>
+          Favorite
+        </Button>
+      </Badge>
       <Modal
         title="Favorites News"
         centered
         width={liked.length >= 3 ? 1200 : 600}
         open={isModalOpen}
-        onOk={handleOk}
         onCancel={handleCancel}
         footer={null}
       >
@@ -41,11 +42,10 @@ const Favorite = () => {
 
           {
             liked.length > 0
-              ? liked.map((item, index) => {
-                return (
-                  <NewsItem key={index} data={item} />
-                )
-              })
+              ? liked.map((item, index) => (
+                <NewsItem key={index} data={item} />
+              )
+              )
               : <p className='text-center'>No Liked News</p>
           }
         </div>
@@ -55,4 +55,4 @@ const Favorite = () => {
     </>
   );
 };
-export default Favorite
+export default React.memo(Favorite)

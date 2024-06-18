@@ -1,50 +1,53 @@
-import React, { useEffect, useState } from 'react'
-import FIlter from '../components/FIlter'
-import Search from '../components/Search'
-import News from '../components/News'
-import Pagination from '../components/Pagination'
+import React, { useCallback, useEffect, useState } from 'react'
+import { FIlter, News, Search, Pagination, Favorite } from '../components/index'
 import { Spin } from 'antd'
 import { getNews } from '../Api/api'
 import { useNavigate } from 'react-router-dom'
-import Favorite from '../components/Favorite'
 
 const HomePage = () => {
-    const [news, setNews] = useState({})
-    const [loading, setLoading] = useState(true)
-    const [categories, setCategories] = useState(JSON.parse(sessionStorage.getItem('categories')) || 0)
-    const [page, setPage] = useState(JSON.parse(sessionStorage.getItem('page')) || 1)
+    const [newsData, setNewsData] = useState({})
+    const [isLoading, setIsLoading] = useState(true)
+    const [selectedCategory, setSelectedCategory] = useState(JSON.parse(sessionStorage.getItem('selectedCategory')) || 0)
+    const [currentPage, setCurrentPage] = useState(JSON.parse(sessionStorage.getItem('currentPage')) || 1)
+
     const navigate = useNavigate()
 
+    // cache data from session storage and set to state
     useEffect(() => {
         const newsFetch = async () => {
-            setLoading(true);
+            setIsLoading(true);
             window.scrollTo(0, 0, { behavior: 'smooth' });
 
-            const cachedNews = sessionStorage.getItem(`news_${categories}_${page}`);
-            if (cachedNews) {
-                setNews(JSON.parse(cachedNews));
+            const cachedNews = JSON.parse(sessionStorage.getItem(`news_${selectedCategory}_${currentPage}`))
+            if (!!cachedNews) {
+                setNewsData(cachedNews);
                 handleStorage()
-                setLoading(false);
             } else {
-                let data = await getNews((page - 1) * 12, categories);
-                setNews(data);
-                setLoading(false);
+                const data = await getNews((currentPage - 1) * 12, selectedCategory);
+                setNewsData(data);
                 handleStorage()
-                sessionStorage.setItem(`news_${categories}_${page}`, JSON.stringify(data));
+                sessionStorage.setItem(`news_${selectedCategory}_${currentPage}`, JSON.stringify(data));
             }
+            setIsLoading(false);
         };
         newsFetch();
-    }, [page, categories]);
+    }, [currentPage, selectedCategory]);
 
-    const handleFilter = (value) => {
+
+    // change page and category when click filter
+    const handleFilter = useCallback((value) => {
         clearNewsFromSessionStorage()
-        setPage(1)
-        setCategories(value)
-    }
+        setCurrentPage(1)
+        setSelectedCategory(value)
+    }, [])
+
+    // pagination handle event
     const pageChange = (value) => {
         clearNewsFromSessionStorage()
-        setPage(value)
+        setCurrentPage(value)
     }
+
+    // clear news from session storage
     const clearNewsFromSessionStorage = () => {
         Object.keys(sessionStorage).forEach(key => {
             if (key.startsWith('news_')) {
@@ -53,15 +56,18 @@ const HomePage = () => {
         });
     };
 
+    // set current page and category to session storage
     const handleStorage = () => {
-        sessionStorage.setItem('page', page)
-        sessionStorage.setItem('categories', categories)
+        sessionStorage.setItem('currentPage', currentPage)
+        sessionStorage.setItem('selectedCategory', selectedCategory)
     }
 
-    const handleSearch = (value) => {
-        sessionStorage.setItem('page', 1)
+    // search onclick handler
+    const onClickSearch = useCallback((value) => {
+        sessionStorage.clear()
         navigate(`/search/${value}`)
-    }
+    }, [])
+
     return (
         <section>
             <h1 className='text-5xl font-bold text-center'>News</h1>
@@ -70,15 +76,20 @@ const HomePage = () => {
                     <FIlter handleFilter={handleFilter} options={options} />
                     <Favorite />
                 </div>
-
-                <Search handleSearch={handleSearch} />
+                <Search handleSearch={onClickSearch} />
             </div>
 
             <div>
-                <Spin spinning={loading} >
-                    <News news={news?.results ?? []} handleStorage={handleStorage} />
+                <Spin spinning={isLoading} >
+                    <News news={newsData?.results ?? []} handleStorage={handleStorage} />
                 </Spin>
-                {news?.results?.length && <Pagination news={news} page={page} pageChange={pageChange} />}
+                {
+                    newsData?.results?.length &&
+                    <Pagination
+                        news={newsData}
+                        page={currentPage}
+                        pageChange={pageChange} />
+                }
             </div>
         </section>
     )
@@ -115,10 +126,6 @@ const options = [
     {
         "id": 58,
         "name": "Features"
-    },
-    {
-        "id": 65,
-        "name": "Standard Feature"
     },
     {
         "id": 64,
