@@ -17,12 +17,15 @@ const ViewPage = () => {
                 </Link> {`> `}
                 {state.id}
             </div>
-            <img src={state.image.original} alt="" className='pt-5 mx-auto' />
             <div className='sm:px-5 md:px-10 py-5'>
                 <h1 className='text-2xl sm:text-5xl py-4 font-bold'>{state.title}</h1>
-                <p className='text-sm'>By <span className='text-primary'>{state.authors}</span>  on {moment(state.publish_date).format('MMM D, YYYY')}</p>
-                <div className='pt-10 [&_a]:text-primary sm:text-lg space-y-6  overflow-hidden'>{HTMLReactParser(state.body)}</div>
+                <p className='text-sm text-right'>By <span className='text-primary'>{state.authors}</span>  on {moment(state.publish_date).format('MMM D, YYYY')}</p>
             </div>
+            <img src={state.image.original} alt="" className='pt-5 mx-auto' />
+
+
+            <div className='pt-10 [&_a]:text-primary sm:text-lg space-y-6  overflow-hidden'>{HTMLReactParser(state.body)}</div>
+
 
         </main>
     )

@@ -9,6 +9,7 @@ const News = ({ news, handleStorage }) => {
                     <NewsItem key={item.id} data={item} />
                 ))
             }
+            {news?.length === 0 && <p>No news found</p>}
         </div>
     )
 }

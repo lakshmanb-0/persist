@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pagination as AntPagination } from 'antd'
 const Pagination = ({ news, page, pageChange }) => {
-    return news?.number_of_total_results > 12 && (
+    return (
         <AntPagination
             current={page}
             responsive

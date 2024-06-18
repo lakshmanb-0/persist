@@ -1,14 +1,9 @@
 import { Input } from 'antd'
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 
-const Search = ({ value = '' }) => {
-    const navigate = useNavigate()
+const Search = ({ value = '', handleSearch }) => {
 
-    const handleSearch = (value) => {
-        sessionStorage.clear()
-        navigate(`/search/${value}`)
-    }
+
     return (
         <Input.Search
             defaultValue={value}

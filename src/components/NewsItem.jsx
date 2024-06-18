@@ -1,20 +1,42 @@
 import { Tooltip } from 'antd'
 import moment from 'moment'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { GoHeart, GoHeartFill } from "react-icons/go";
 
 const NewsItem = ({ data }) => {
     const { title, authors, image, publish_date } = data
     const [imageUrl, setImageUrl] = useState(image.screen_tiny)
     const navigate = useNavigate()
+    const [liked, setLiked] = useState(false)
 
     const handleClick = () => {
         navigate(`/news/${data.id}`, { state: data })
     }
+
+    const handleLike = () => {
+        if (liked) {
+            setLiked(false)
+            let liked = JSON.parse(localStorage.getItem('liked')) || []
+            liked = liked?.filter(item => item.id !== data.id)
+            liked && localStorage.setItem('liked', JSON.stringify(liked))
+        } else {
+            setLiked(true)
+            let liked = JSON.parse(localStorage.getItem('liked')) || []
+            liked.push(data)
+            localStorage.setItem('liked', JSON.stringify(liked))
+        }
+    }
+
+    useEffect(() => {
+        let liked = JSON.parse(localStorage.getItem('liked')) || []
+        setLiked(liked?.find(item => item.id === data.id))
+    }, [data.id])
+
     return (
         <button
             onClick={handleClick}
-            className='flex flex-col gap-4 bg-secondary rounded-xl overflow-hidden' >
+            className='flex flex-col gap-4 bg-secondary rounded-xl overflow-hidden relative shadow-2xl ' >
             <img src={imageUrl} alt="" className='w-full' />
             <img src={image.original} alt="" className='hidden' onLoad={() => setImageUrl(image.original)} />
             <div className='p-4 w-full'>
@@ -25,6 +47,13 @@ const NewsItem = ({ data }) => {
                     <p className='font-medium text-primary'>{authors}</p>
                     <p className='text-white/40'>{moment(publish_date).format('MMM D, YYYY')}</p>
                 </div>
+            </div>
+            <div className='absolute top-2 right-2' onClick={(e) => e.stopPropagation()}>
+                {
+                    liked
+                        ? <GoHeartFill className=' fill-primary' size={35} onClick={handleLike} />
+                        : <GoHeart className=' text-primary' size={35} onClick={handleLike} />
+                }
             </div>
         </button>
     )
