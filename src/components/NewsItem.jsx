@@ -1,22 +1,23 @@
 import { Tooltip } from 'antd'
 import moment from 'moment'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const NewsItem = ({ data, page }) => {
+const NewsItem = ({ data }) => {
     const { title, authors, image, publish_date } = data
+    const [imageUrl, setImageUrl] = useState(image.screen_tiny)
     const navigate = useNavigate()
 
     const handleClick = () => {
-        sessionStorage.setItem('page', page)
         navigate(`/news/${data.id}`, { state: data })
     }
     return (
         <button
             onClick={handleClick}
-            className='flex flex-col gap-4 bg-secondary rounded-xl overflow-hidden h-fit' >
-            <img src={image.original} alt="" className='w-full' />
-            <div className='p-4'>
+            className='flex flex-col gap-4 bg-secondary rounded-xl overflow-hidden' >
+            <img src={imageUrl} alt="" className='w-full' />
+            <img src={image.original} alt="" className='hidden' onLoad={() => setImageUrl(image.original)} />
+            <div className='p-4 w-full'>
                 <Tooltip title={title} >
                     <h1 className='text-xl font-bold line-clamp-2'>{title}</h1>
                 </Tooltip>
