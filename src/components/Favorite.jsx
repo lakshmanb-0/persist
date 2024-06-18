@@ -15,9 +15,9 @@ const Favorite = () => {
     setIsModalOpen(false);
   };
   const getGridClass = () => {
-    if (liked.length >= 3) {
+    if (liked?.length >= 3) {
       return 'md:grid-cols-3 xl:grid-cols-4';
-    } else if (liked.length === 2) {
+    } else if (liked?.length === 2) {
       return 'md:grid-cols-2';
     } else {
       return 'md:grid-cols-1';
@@ -25,7 +25,7 @@ const Favorite = () => {
   }
   return (
     <>
-      <Badge count={liked.length} className='outline-none' >
+      <Badge count={liked?.length} className='outline-none' >
         <Button type="primary" onClick={showModal}>
           Favorite
         </Button>
@@ -33,7 +33,7 @@ const Favorite = () => {
       <Modal
         title="Favorites News"
         centered
-        width={liked.length >= 3 ? 1200 : 600}
+        width={liked?.length >= 3 ? 1200 : 600}
         open={isModalOpen}
         onCancel={handleCancel}
         footer={null}
@@ -41,8 +41,8 @@ const Favorite = () => {
         <div className={`grid gap-10 sm:grid-cols-2 pt-3 ${getGridClass()}`}>
 
           {
-            liked.length > 0
-              ? liked.map((item, index) => (
+            liked?.length > 0
+              ? liked?.map((item, index) => (
                 <NewsItem key={index} data={item} />
               )
               )

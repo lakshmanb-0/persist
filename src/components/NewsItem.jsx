@@ -32,7 +32,7 @@ const NewsItem = ({ data }) => {
 
     useEffect(() => {
         // Check if the current news item is in the favorites
-        const isLiked = favorites.some(item => item.id === data.id)
+        const isLiked = favorites?.some(item => item.id === data.id)
         setLiked(isLiked)
     }, [favorites, data.id])
 
