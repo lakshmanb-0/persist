@@ -1,6 +1,7 @@
 import React from 'react'
 import { Pagination as AntPagination } from 'antd'
 const Pagination = ({ news, page, pageChange }) => {
+
     return (
         <AntPagination
             current={page}

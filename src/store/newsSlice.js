@@ -16,6 +16,8 @@ const newsSlice = createSlice({
         },
     }
 })
+
+// save favorites to local storage
 export const saveFavoritesToLocalStorage = store => next => action => {
     const result = next(action);
     if (action.type.startsWith('news/')) {

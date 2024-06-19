@@ -16,10 +16,12 @@ const NewsItem = ({ data }) => {
     const favorites = useSelector(state => state.favorites)
 
 
+    // navigate to view page
     const handleClick = () => {
         navigate(`/news/${data.id}`, { state: { ...data, fromSearch: pathname.includes('/search') } })
     }
 
+    // toggle like
     const handleLike = () => {
         if (liked) {
             setLiked(false)
@@ -39,7 +41,8 @@ const NewsItem = ({ data }) => {
     return (
         <button
             onClick={handleClick}
-            className='flex flex-col gap-4 bg-secondary rounded-xl overflow-hidden relative shadow-2xl ' >
+            className='flex flex-col gap-4 bg-secondary rounded-xl overflow-hidden relative shadow-2xl '
+        >
             <img src={imageUrl} alt="" className='w-full' />
             <img src={image.original} alt="" className='hidden' onLoad={() => setImageUrl(image.original)} />
             <div className='p-4 w-full'>

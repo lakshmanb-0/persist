@@ -2,6 +2,7 @@ import { Input } from 'antd'
 import React from 'react'
 
 const Search = ({ value = '', handleSearch }) => {
+
     return (
         <Input.Search
             defaultValue={value}

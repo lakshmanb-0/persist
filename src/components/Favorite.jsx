@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Badge, Button, Modal } from 'antd';
 import NewsItem from './NewsItem';
 import { useSelector } from 'react-redux';
@@ -14,6 +14,8 @@ const Favorite = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
+
+  // get grid class based on number of liked news
   const getGridClass = () => {
     if (liked?.length >= 3) {
       return 'md:grid-cols-3 xl:grid-cols-4';
@@ -25,7 +27,7 @@ const Favorite = () => {
   }
   return (
     <>
-      <Badge count={liked?.length} className='outline-none' >
+      <Badge count={liked?.length}  >
         <Button type="primary" onClick={showModal}>
           Favorite
         </Button>
@@ -39,18 +41,14 @@ const Favorite = () => {
         footer={null}
       >
         <div className={`grid gap-10 sm:grid-cols-2 pt-3 ${getGridClass()}`}>
-
           {
             liked?.length > 0
               ? liked?.map((item, index) => (
                 <NewsItem key={index} data={item} />
-              )
-              )
+              ))
               : <p className='text-center'>No Liked News</p>
           }
         </div>
-
-
       </Modal>
     </>
   );

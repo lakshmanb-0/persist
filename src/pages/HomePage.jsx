@@ -47,7 +47,7 @@ const HomePage = () => {
         setCurrentPage(value)
     }
 
-    // clear news from session storage
+    // clear previous cache newsData from session storage
     const clearNewsFromSessionStorage = () => {
         Object.keys(sessionStorage).forEach(key => {
             if (key.startsWith('news_')) {

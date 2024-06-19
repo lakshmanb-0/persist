@@ -11,6 +11,7 @@ const SearchPage = () => {
     const [page, setPage] = useState(JSON.parse(sessionStorage.getItem('currentPage')) || 1)
     const navigate = useNavigate()
 
+    // cache data from session storage and set to state
     useEffect(() => {
         const fetchNews = async () => {
             setLoading(true);
@@ -29,16 +30,20 @@ const SearchPage = () => {
         fetchNews();
     }, [page, id]);
 
+
+    // pagination handle event
     const pageChange = (value) => {
         clearNewsFromSessionStorage()
         setPage(value)
     }
 
+    // setting current page to session storage
     const handleStorage = () => {
         sessionStorage.setItem('currentPage', page)
         sessionStorage.setItem('selectedCategory', 0)
     }
 
+    // clear previous cache newsData from session storage
     const clearNewsFromSessionStorage = () => {
         Object.keys(sessionStorage).forEach(key => {
             if (key.startsWith('news_search_')) {
@@ -47,15 +52,19 @@ const SearchPage = () => {
         });
     };
 
+    // handle search value
     const handleSearch = (value) => {
         setPage(1)
         navigate(`/search/${value}`)
     }
 
+
     const breadcrumbList = [
         { title: <Link to={'/'} onClick={() => sessionStorage.clear()}>Home</Link>, },
         { title: id, },
     ]
+
+
     return (
         <section className='py-5 px-4 max-w-7xl mx-auto'>
             <Breadcrumb
@@ -77,8 +86,6 @@ const SearchPage = () => {
                     }
                 </Spin>
             </div>
-
-
         </section>
     )
 }

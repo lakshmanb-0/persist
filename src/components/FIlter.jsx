@@ -3,6 +3,7 @@ import React from 'react'
 
 const FIlter = ({ handleFilter, options }) => {
     const valueName = options.find((item) => item.id === JSON.parse(sessionStorage.getItem('selectedCategory')))
+
     return (
         <Select
             defaultValue={valueName?.name || 'All'}
